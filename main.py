@@ -12,7 +12,7 @@ from threading import Thread
 from datetime import datetime
 from kalman_filter import KalmanFilter
 from tracker import Tracker
-import time
+from time import sleep
 from tkinter import *
 
 
@@ -56,11 +56,21 @@ def monthly_payment(entries):
     Thread(target = videoProcess, args=(cctv01,)).start() #thread = threading.Thread(target=worker, args=(i,))
     Thread(target = videoProcess2, args=(cctv02,)).start()
     Thread(target = videoProcess3, args=(cctv03,)).start()
-    Thread(target = videoProcess4, args=(cctv04,)).start()
-
+    Thread(target = videoProcess4, args=(cctv04,)).start()#processControlasPer() 
+    Thread(target = processControlasPer).start()
     
+        
 
 #########################################
+def processControlasPer():
+    while True:
+        print("Control Intiation")
+        combinationControl()
+        print("Control Suspended")
+        sleep(5)
+        
+    
+#########################################    
 
 
 board = Arduino("COM11")
@@ -740,7 +750,7 @@ def videoProcess(cctv01):
                                 
                                 print ('FILE SAVED!')
                                 print ('ACTION')
-                                combinationControl()
+                                #combinationControl()
                             
                                 
                                
@@ -946,7 +956,7 @@ def videoProcess2(cctv02):
                                 
                                 print ('FILE SAVED!')
                                 print ('ACTION')
-                                combinationControl()
+                                #combinationControl()
                             
                                 
                                
@@ -1151,7 +1161,7 @@ def videoProcess3(cctv03):
                                 
                                 print ('FILE SAVED!')
                                 print ('ACTION')
-                                combinationControl()
+                                #combinationControl()
                             
                                 
                                
@@ -1354,7 +1364,7 @@ def videoProcess4(cctv04):
                                 
                                 print ('FILE SAVED!')
                                 print ('ACTION')
-                                combinationControl()
+                                #combinationControl()
                             
                                 
                                
