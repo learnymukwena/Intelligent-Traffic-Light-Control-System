@@ -34,14 +34,14 @@ DELAY_LEVEL2 = 3
 DELAY_LEVEL1 = 1
 
 #########################################
-fields = ('Annual Rate', 'Number of Payments', 'Loan Principle', 'Monthly Payment', 'Remaining Loan')
+fields = ('CCTV01 VIDEO', 'CCTV02 VIDEO', 'CCTV03 VIDEO', 'CCTV04 VIDEO', 'ARDUINO PORT')
 def makeform(root, fields):
    entries = {}
    for field in fields:
       row = Frame(root)
       lab = Label(row, width=22, text=field+": ", anchor='w')
       ent = Entry(row)
-      ent.insert(0,"0")
+      ent.insert(0,"road_traffic4.mp4")
       row.pack(side = TOP, fill = X, padx = 5 , pady = 5)
       lab.pack(side = LEFT)
       ent.pack(side = RIGHT, expand = YES, fill = X)
@@ -49,10 +49,10 @@ def makeform(root, fields):
    return entries
 
 def monthly_payment(entries):
-    cctv01 = entries['Annual Rate'].get()
-    cctv02 = entries['Monthly Payment'].get()
-    cctv03 = entries['Loan Principle'].get()
-    cctv04 = entries['Monthly Payment'].get()
+    cctv01 = entries['CCTV01 VIDEO'].get()
+    cctv02 = entries['CCTV02 VIDEO'].get()
+    cctv03 = entries['CCTV03 VIDEO'].get()
+    cctv04 = entries['CCTV04 VIDEO'].get()
     Thread(target = videoProcess, args=(cctv01,)).start() #thread = threading.Thread(target=worker, args=(i,))
     Thread(target = videoProcess2, args=(cctv02,)).start()
     Thread(target = videoProcess3, args=(cctv03,)).start()
@@ -1425,6 +1425,7 @@ if __name__ == '__main__':
     #Thread(target = combinationControl).start()
     
    root = Tk()
+   root.title("SMART CITY INTELLIGENT TRAFFIC LIGHT CONTROL")
    ents = makeform(root, fields)
    root.bind('<Return>', (lambda event, e = ents: fetch(e)))
    b1 = Button(root, text = 'Start',
