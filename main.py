@@ -13,6 +13,8 @@ from datetime import datetime
 from kalman_filter import KalmanFilter
 from tracker import Tracker
 import time
+from tkinter import *
+
 
 TLG01 = 13
 TLR01 = 12
@@ -30,6 +32,35 @@ DELAY_LEVEL4 = 10
 DELAY_LEVEL3 = 6
 DELAY_LEVEL2 = 3
 DELAY_LEVEL1 = 1
+
+#########################################
+fields = ('Annual Rate', 'Number of Payments', 'Loan Principle', 'Monthly Payment', 'Remaining Loan')
+def makeform(root, fields):
+   entries = {}
+   for field in fields:
+      row = Frame(root)
+      lab = Label(row, width=22, text=field+": ", anchor='w')
+      ent = Entry(row)
+      ent.insert(0,"0")
+      row.pack(side = TOP, fill = X, padx = 5 , pady = 5)
+      lab.pack(side = LEFT)
+      ent.pack(side = RIGHT, expand = YES, fill = X)
+      entries[field] = ent
+   return entries
+
+def monthly_payment(entries):
+    cctv01 = entries['Annual Rate'].get()
+    cctv02 = entries['Monthly Payment'].get()
+    cctv03 = entries['Loan Principle'].get()
+    cctv04 = entries['Monthly Payment'].get()
+    Thread(target = videoProcess, args=(cctv01,)).start() #thread = threading.Thread(target=worker, args=(i,))
+    Thread(target = videoProcess2, args=(cctv02,)).start()
+    Thread(target = videoProcess3, args=(cctv03,)).start()
+    Thread(target = videoProcess4, args=(cctv04,)).start()
+
+    
+
+#########################################
 
 
 board = Arduino("COM11")
@@ -552,10 +583,12 @@ def write_csv(data):
         writer = csv.writer(outfile)
         writer.writerow(data)
         
-def videoProcess():
+def videoProcess(cctv01):
      # The one I first used for testing; after staring at it so much, I've grown attached to this road :3
     #the_og_base_url = 'http://wzmedia.dot.ca.gov:1935/D3/89_rampart.stream/'
-
+    
+    
+    
     BASE_URL = 'http://wzmedia.dot.ca.gov:1935/D3/80_whitmore_grade.stream/'
     FPS = 30
     '''
@@ -592,7 +625,7 @@ def videoProcess():
 
     # Capture livestream
     #cap = cv2.VideoCapture (BASE_URL + 'playlist.m3u8')
-    cap = cv2.VideoCapture ('road_traffic4.mp4')##
+    cap = cv2.VideoCapture (cctv01)##
 
     while True:
         centers = []
@@ -756,11 +789,13 @@ def videoProcess():
         
 ###################################################################################################################
 
-def videoProcess2():
+def videoProcess2(cctv02):
          # The one I first used for testing; after staring at it so much, I've grown attached to this road :3
     #the_og_base_url = 'http://wzmedia.dot.ca.gov:1935/D3/89_rampart.stream/'
 
     BASE_URL = 'http://wzmedia.dot.ca.gov:1935/D3/80_whitmore_grade.stream/'
+
+
     FPS = 30
     '''
         Distance to line in road: ~0.025 miles
@@ -796,7 +831,7 @@ def videoProcess2():
 
     # Capture livestream
     #cap = cv2.VideoCapture (BASE_URL + 'playlist.m3u8')
-    cap = cv2.VideoCapture ('road_traffic4.mp4')##
+    cap = cv2.VideoCapture (cctv02)##
 
     while True:
         centers = []
@@ -961,7 +996,7 @@ def videoProcess2():
  
 ###################################################################################################################
        
-def videoProcess3():
+def videoProcess3(cctv03):
              # The one I first used for testing; after staring at it so much, I've grown attached to this road :3
     #the_og_base_url = 'http://wzmedia.dot.ca.gov:1935/D3/89_rampart.stream/'
 
@@ -1001,7 +1036,7 @@ def videoProcess3():
 
     # Capture livestream
     #cap = cv2.VideoCapture (BASE_URL + 'playlist.m3u8')
-    cap = cv2.VideoCapture ('road_traffic4.mp4')##
+    cap = cv2.VideoCapture (cctv03)##
 
     while True:
         centers = []
@@ -1164,7 +1199,7 @@ def videoProcess3():
     for file in glob.glob('speeding_*.png'):
         os.remove(file)
  #########################################################################################################################       
-def videoProcess4():
+def videoProcess4(cctv04):
                  # The one I first used for testing; after staring at it so much, I've grown attached to this road :3
     #the_og_base_url = 'http://wzmedia.dot.ca.gov:1935/D3/89_rampart.stream/'
 
@@ -1204,7 +1239,7 @@ def videoProcess4():
 
     # Capture livestream
     #cap = cv2.VideoCapture (BASE_URL + 'playlist.m3u8')
-    cap = cv2.VideoCapture ('road_trafficA.mp4')##
+    cap = cv2.VideoCapture (cctv04)##
 
     while True:
         centers = []
@@ -1370,8 +1405,8 @@ if __name__ == '__main__':
     #videoProcess()
     #Thread(target = videoProcess).start()
     #Thread(target = videoProcess2).start()
-    Thread(target = videoProcess3).start()
-    Thread(target = videoProcess4).start()
+    #Thread(target = videoProcess3).start()
+    #Thread(target = videoProcess4).start()
     #Thread(target = checkcongestion4).start()
     #Thread(target = checkcongestion3).start()
     #Thread(target = checkcongestion2).start()
@@ -1388,6 +1423,22 @@ if __name__ == '__main__':
     #videoProcess3()
     #combinationControl()
     #Thread(target = combinationControl).start()
+    
+   root = Tk()
+   ents = makeform(root, fields)
+   root.bind('<Return>', (lambda event, e = ents: fetch(e)))
+   b1 = Button(root, text = 'Start',
+      command=(lambda e = ents: monthly_payment(e)))
+   b1.pack(side = LEFT, padx = 5, pady = 5)
+   
+   b2 = Button(root, text='Pause',
+   command=(lambda e = ents: monthly_payment(e)))
+   
+   b2.pack(side = LEFT, padx = 5, pady = 5)
+   
+   b3 = Button(root, text = 'Quit', command = root.quit)
+   b3.pack(side = LEFT, padx = 5, pady = 5)
+   root.mainloop()
 
 
         
